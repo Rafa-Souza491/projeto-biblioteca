@@ -9,7 +9,7 @@ Projeto desenvolvido para a disciplina de Projeto de Software.
 - HTML
 - CSS
 - JavaScript
-- SQLite
+- MySQL
 
 ## Estrutura
 
@@ -21,5 +21,4 @@ O projeto utiliza arquitetura em três camadas:
 
 ## Objetivo
 
-Desenvolver um sistema para gerenciamento de livros,
-usuários e empréstimos de uma biblioteca.
+Desenvolver um sistema para gerenciamento de livros, usuários e empréstimos de uma biblioteca.
