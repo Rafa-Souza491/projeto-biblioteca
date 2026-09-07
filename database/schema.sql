@@ -1,30 +1,25 @@
-CREATE DATABASE IF NOT EXISTS biblioteca;
+
+SET NAMES utf8mb4;
+
+CREATE DATABASE IF NOT EXISTS biblioteca
+    CHARACTER SET utf8mb4
+    COLLATE utf8mb4_unicode_ci;
 
 USE biblioteca;
-
 
 -- =========================================
 -- TABELA DE LIVROS
 -- =========================================
 
 CREATE TABLE IF NOT EXISTS livros (
-
     id INT AUTO_INCREMENT PRIMARY KEY,
-
     titulo VARCHAR(150) NOT NULL,
-
     autor VARCHAR(100) NOT NULL,
-
     isbn VARCHAR(20),
-
     categoria VARCHAR(50),
-
     ano_publicacao INT,
-
     quantidade INT NOT NULL
-
-);
-
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- =========================================
 -- DADOS INICIAIS
@@ -34,7 +29,6 @@ INSERT INTO livros
     (titulo, autor, isbn, categoria, ano_publicacao, quantidade)
 
 SELECT * FROM (
-
     SELECT
         '1984' AS titulo,
         'George Orwell' AS autor,
@@ -132,7 +126,6 @@ SELECT * FROM (
         'Aventura',
         1870,
         2
-
 ) AS livros_iniciais
 
 WHERE NOT EXISTS (
