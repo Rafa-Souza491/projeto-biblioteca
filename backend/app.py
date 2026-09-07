@@ -15,7 +15,7 @@ def inicio():
 
     cursor = conexao.cursor(dictionary=True)
 
-    cursor.execute("SELECT * FROM livros")
+    cursor.execute("SELECT * FROM livros ORDER BY titulo ASC")
 
     livros = cursor.fetchall()
 
@@ -110,7 +110,7 @@ def atualizar_livro(id):
     cursor.close()
     conexao.close()
 
-    return "Livro atualizado com sucesso!"
+    return redirect("/")
 
 @app.route("/livros", methods=["POST"])
 def cadastrar_livro():
@@ -148,8 +148,7 @@ def cadastrar_livro():
     cursor.close()
     conexao.close()
 
-    return "Livro cadastrado com sucesso!"
-
+    return redirect("/")
 
 if __name__ == "__main__":
     app.run(debug=True)

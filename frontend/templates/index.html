@@ -146,15 +146,16 @@
 
         <thead>
 
-            <tr>
-                <th>ID</th>
+           <tr>
+                <th>Nº</th>
                 <th>Título</th>
                 <th>Autor</th>
                 <th>ISBN</th>
                 <th>Categoria</th>
                 <th>Ano</th>
                 <th>Quantidade</th>
-            </tr>
+                <th>Ações</th>
+        </tr>
 
         </thead>
 
@@ -163,8 +164,7 @@
             {% for livro in livros %}
 
             <tr>
-
-                <td>{{ livro.id }}</td>
+                <td>{{ loop.index }}</td>
                 <td>{{ livro.titulo }}</td>
                 <td>{{ livro.autor }}</td>
                 <td>{{ livro.isbn }}</td>
