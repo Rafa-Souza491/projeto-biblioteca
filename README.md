@@ -7,8 +7,6 @@ Projeto desenvolvido para a disciplina de Projeto de Software.
 - Python
 - Flask
 - HTML
-- CSS
-- JavaScript
 - MySQL
 
 ## Estrutura
