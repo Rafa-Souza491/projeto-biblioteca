@@ -293,5 +293,178 @@ def excluir_usuario(id):
 
     return redirect("/usuarios")
 
+@app.route("/emprestimos")
+def listar_emprestimos():
+
+    conexao = conectar()
+
+    cursor = conexao.cursor(dictionary=True)
+
+    # Buscar empréstimos
+    cursor.execute("""
+        SELECT
+            emprestimos.id,
+            usuarios.nome AS usuario,
+            livros.titulo AS livro,
+            emprestimos.data_emprestimo,
+            emprestimos.data_devolucao_prevista,
+            emprestimos.data_devolucao
+        FROM emprestimos
+        INNER JOIN usuarios
+            ON emprestimos.usuario_id = usuarios.id
+        INNER JOIN livros
+            ON emprestimos.livro_id = livros.id
+        ORDER BY emprestimos.id DESC
+    """)
+
+    emprestimos = cursor.fetchall()
+
+    # Buscar usuários
+    cursor.execute("""
+        SELECT id, nome
+        FROM usuarios
+        ORDER BY nome ASC
+    """)
+
+    usuarios = cursor.fetchall()
+
+    # Buscar livros
+    cursor.execute("""
+        SELECT id, titulo, quantidade
+        FROM livros
+        WHERE quantidade > 0
+        ORDER BY titulo ASC
+    """)
+
+    livros = cursor.fetchall()
+
+    cursor.close()
+    conexao.close()
+
+    return render_template(
+        "emprestimos.html",
+        emprestimos=emprestimos,
+        usuarios=usuarios,
+        livros=livros
+    )
+
+@app.route("/emprestimos", methods=["POST"])
+def cadastrar_emprestimo():
+
+    usuario_id = request.form["usuario_id"]
+    livro_id = request.form["livro_id"]
+    data_emprestimo = request.form["data_emprestimo"]
+    data_devolucao_prevista = request.form["data_devolucao_prevista"]
+
+    conexao = conectar()
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute(
+        "SELECT quantidade FROM livros WHERE id = %s",
+        (livro_id,)
+    )
+
+    livro = cursor.fetchone()
+
+    if livro is None:
+        cursor.close()
+        conexao.close()
+        return redirect("/emprestimos")
+
+    if livro["quantidade"] <= 0:
+        cursor.close()
+        conexao.close()
+        return redirect("/emprestimos")
+
+    cursor.execute(
+        """
+        UPDATE livros
+        SET quantidade = quantidade - 1
+        WHERE id = %s
+        """,
+        (livro_id,)
+    )
+
+    sql = """
+        INSERT INTO emprestimos
+        (
+            usuario_id,
+            livro_id,
+            data_emprestimo,
+            data_devolucao_prevista
+        )
+        VALUES (%s, %s, %s, %s)
+    """
+
+    valores = (
+        usuario_id,
+        livro_id,
+        data_emprestimo,
+        data_devolucao_prevista
+    )
+
+    cursor.execute(sql, valores)
+
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+    return redirect("/emprestimos")
+
+@app.route("/emprestimos/<int:id>/devolver", methods=["POST"])
+def devolver_emprestimo(id):
+
+    conexao = conectar()
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute(
+        """
+        SELECT livro_id, data_devolucao
+        FROM emprestimos
+        WHERE id = %s
+        """,
+        (id,)
+    )
+
+    emprestimo = cursor.fetchone()
+
+    if emprestimo is None:
+        cursor.close()
+        conexao.close()
+        return redirect("/emprestimos")
+
+    if emprestimo["data_devolucao"] is not None:
+        cursor.close()
+        conexao.close()
+        return redirect("/emprestimos")
+
+    livro_id = emprestimo["livro_id"]
+
+    cursor.execute(
+        """
+        UPDATE emprestimos
+        SET data_devolucao = CURDATE()
+        WHERE id = %s
+        """,
+        (id,)
+    )
+
+    cursor.execute(
+        """
+        UPDATE livros
+        SET quantidade = quantidade + 1
+        WHERE id = %s
+        """,
+        (livro_id,)
+    )
+
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+    return redirect("/emprestimos")
+
 if __name__ == "__main__":
     app.run(debug=True)
