@@ -132,3 +132,15 @@ WHERE NOT EXISTS (
     SELECT 1
     FROM livros
 );
+
+-- =========================================
+-- TABELA DE USUÁRIOS - AC2
+-- =========================================
+
+CREATE TABLE IF NOT EXISTS usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(150) NOT NULL,
+    telefone VARCHAR(20),
+    data_cadastro DATE NOT NULL
+) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

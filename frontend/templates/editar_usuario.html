@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Editar Usuário - Sistema de Biblioteca</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        form {
+            width: 400px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Editar Usuário</h1>
+
+    <form action="/usuarios/{{ usuario.id }}/editar" method="POST">
+
+        <label for="nome">Nome:</label>
+
+        <input
+            type="text"
+            id="nome"
+            name="nome"
+            value="{{ usuario.nome }}"
+            required
+        >
+
+        <label for="email">E-mail:</label>
+
+        <input
+            type="email"
+            id="email"
+            name="email"
+            value="{{ usuario.email }}"
+            required
+        >
+
+        <label for="telefone">Telefone:</label>
+
+        <input
+            type="text"
+            id="telefone"
+            name="telefone"
+            value="{{ usuario.telefone or '' }}"
+        >
+
+        <label for="data_cadastro">Data de cadastro:</label>
+
+        <input
+            type="date"
+            id="data_cadastro"
+            name="data_cadastro"
+            value="{{ usuario.data_cadastro }}"
+            required
+        >
+
+        <button type="submit">
+            Salvar alterações
+        </button>
+
+    </form>
+
+    <br>
+
+    <a href="/usuarios">
+        Voltar para usuários
+    </a>
+
+</body>
+
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Usuários - Sistema de Biblioteca</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 40px;
+        }
+
+        h1 {
+            margin-bottom: 30px;
+        }
+
+        form {
+            width: 400px;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        hr {
+            margin: 40px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            font-weight: bold;
+        }
+
+    </style>
+
+    <script>
+
+        function confirmarExclusao() {
+
+            return confirm(
+                "Tem certeza que deseja excluir este usuário?"
+            );
+
+        }
+
+    </script>
+
+</head>
+
+<body>
+
+    <h1>Gerenciamento de Usuários</h1>
+
+    <h2>Cadastrar Usuário</h2>
+
+    <form action="/usuarios" method="POST">
+
+        <label for="nome">Nome:</label>
+
+        <input
+            type="text"
+            id="nome"
+            name="nome"
+            required
+        >
+
+        <label for="email">E-mail:</label>
+
+        <input
+            type="email"
+            id="email"
+            name="email"
+            required
+        >
+
+        <label for="telefone">Telefone:</label>
+
+        <input
+            type="text"
+            id="telefone"
+            name="telefone"
+        >
+
+        <label for="data_cadastro">Data de cadastro:</label>
+
+        <input
+            type="date"
+            id="data_cadastro"
+            name="data_cadastro"
+            required
+        >
+
+        <div style="display: flex; gap: 50px; align-items: center;">
+
+    <button type="submit">
+        Cadastrar Usuário
+    </button>
+
+    <a href="/">
+        <button type="button">
+            Voltar para página inicial
+        </button>
+    </a>
+
+</div>
+
+    </form>
+
+    <hr>
+
+    <h2>Usuários cadastrados</h2>
+
+    <table>
+
+        <thead>
+
+            <tr>
+                <th>Nº</th>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Telefone</th>
+                <th>Data de cadastro</th>
+                <th>Ações</th>
+            </tr>
+
+        </thead>
+
+        <tbody>
+
+            {% for usuario in usuarios %}
+
+            <tr>
+
+                <td>{{ loop.index }}</td>
+
+                <td>{{ usuario.nome }}</td>
+
+                <td>{{ usuario.email }}</td>
+
+                <td>{{ usuario.telefone }}</td>
+
+                <td>{{ usuario.data_cadastro }}</td>
+
+                <td>
+
+                    <a href="/usuarios/{{ usuario.id }}/editar">
+                        Editar
+                    </a>
+
+                    <form
+                        action="/usuarios/{{ usuario.id }}/excluir"
+                        method="POST"
+                        style="display:inline;"
+                        onsubmit="return confirmarExclusao();"
+                    >
+
+                        <button type="submit">
+                            Excluir
+                        </button>
+
+                    </form>
+
+                </td>
+
+            </tr>
+
+            {% endfor %}
+
+        </tbody>
+
+    </table>
+
+    <br>
+
+    <a href="/">
+        Voltar para livros
+    </a>
+
+</body>
+
+</html>

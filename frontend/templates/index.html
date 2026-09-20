@@ -2,7 +2,6 @@
 <html lang="pt-BR">
 
 <head>
-
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,197 +9,112 @@
     <title>Sistema de Biblioteca</title>
 
     <style>
-
         body {
             font-family: Arial, sans-serif;
-            margin: 40px;
+            margin: 0;
+            padding: 40px;
+            background-color: #f5f5f5;
+            text-align: center;
         }
 
         h1 {
-            margin-bottom: 30px;
+            margin-bottom: 10px;
         }
 
-        form {
-            width: 400px;
+        p {
+            margin-bottom: 40px;
         }
 
-        label {
-            display: block;
-            margin-top: 10px;
-            margin-bottom: 5px;
+        .menu {
+            display: flex;
+            justify-content: center;
+            gap: 25px;
+            flex-wrap: wrap;
         }
 
-        input {
-            width: 100%;
-            padding: 8px;
+        .card {
+            width: 250px;
+            padding: 30px;
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            text-decoration: none;
+            color: black;
             box-sizing: border-box;
         }
 
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            cursor: pointer;
+        .card:hover {
+            background-color: #eeeeee;
         }
 
-        hr {
-            margin: 40px 0;
+        .icone {
+            font-size: 45px;
+            margin-bottom: 15px;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        th,
-        td {
-            border: 1px solid #ccc;
-            padding: 10px;
-            text-align: left;
-        }
-
-        th {
+        .titulo {
+            font-size: 22px;
             font-weight: bold;
+            margin-bottom: 10px;
         }
 
+        .descricao {
+            font-size: 14px;
+        }
     </style>
-    <script>
-
-    function confirmarExclusao() {
-
-        return confirm(
-            "Tem certeza que deseja excluir este livro?"
-        );
-
-    }
-
-</script>
-
 </head>
 
 <body>
 
     <h1>Sistema de Biblioteca</h1>
 
-    <h2>Cadastrar Livro</h2>
+    <p>Selecione uma das opções abaixo:</p>
 
-    <form action="/livros" method="POST">
+    <div class="menu">
 
-        <label for="titulo">Título:</label>
-        <input
-            type="text"
-            id="titulo"
-            name="titulo"
-            required
-        >
+        <a href="/livros" class="card">
 
-        <label for="autor">Autor:</label>
-        <input
-            type="text"
-            id="autor"
-            name="autor"
-            required
-        >
+            <div class="icone">📚</div>
 
-        <label for="isbn">ISBN:</label>
-        <input
-            type="text"
-            id="isbn"
-            name="isbn"
-        >
+            <div class="titulo">
+                Livros
+            </div>
 
-        <label for="categoria">Categoria:</label>
-        <input
-            type="text"
-            id="categoria"
-            name="categoria"
-        >
+            <div class="descricao">
+                Cadastrar, editar, listar e excluir livros.
+            </div>
 
-        <label for="ano_publicacao">Ano de publicação:</label>
-        <input
-            type="number"
-            id="ano_publicacao"
-            name="ano_publicacao"
-        >
+        </a>
 
-        <label for="quantidade">Quantidade:</label>
-        <input
-            type="number"
-            id="quantidade"
-            name="quantidade"
-            required
-        >
+        <a href="/usuarios" class="card">
 
-        <button type="submit">
-            Cadastrar Livro
-        </button>
+            <div class="icone">👤</div>
 
-    </form>
+            <div class="titulo">
+                Usuários
+            </div>
 
+            <div class="descricao">
+                Cadastrar, editar, listar e excluir usuários.
+            </div>
 
-    <hr>
+        </a>
 
+        <a href="/emprestimos" class="card">
 
-    <h2>Livros cadastrados</h2>
+            <div class="icone">📖</div>
 
-    <table>
+            <div class="titulo">
+                Empréstimos
+            </div>
 
-        <thead>
+            <div class="descricao">
+                Gerenciar empréstimos de livros.
+            </div>
 
-           <tr>
-                <th>Nº</th>
-                <th>Título</th>
-                <th>Autor</th>
-                <th>ISBN</th>
-                <th>Categoria</th>
-                <th>Ano</th>
-                <th>Quantidade</th>
-                <th>Ações</th>
-        </tr>
+        </a>
 
-        </thead>
-
-        <tbody>
-
-            {% for livro in livros %}
-
-            <tr>
-                <td>{{ loop.index }}</td>
-                <td>{{ livro.titulo }}</td>
-                <td>{{ livro.autor }}</td>
-                <td>{{ livro.isbn }}</td>
-                <td>{{ livro.categoria }}</td>
-                <td>{{ livro.ano_publicacao }}</td>
-                <td>{{ livro.quantidade }}</td>
-
-                <td>
-
-    <a href="/livros/{{ livro.id }}/editar">
-        Editar
-    </a>
-
-    <form
-    action="/livros/{{ livro.id }}/excluir"
-    method="POST"
-    style="display:inline;"
-    onsubmit="return confirmarExclusao();"
->
-
-    <button type="submit">
-        Excluir
-    </button>
-
-</form>
-
-</td>
-
-
-            </tr>
-
-            {% endfor %}
-
-        </tbody>
-
-    </table>
+    </div>
 
 </body>
 

@@ -10,12 +10,19 @@ app = Flask(
 
 @app.route("/")
 def inicio():
+    return render_template("index.html")
+
+
+@app.route("/livros")
+def listar_livros():
 
     conexao = conectar()
 
     cursor = conexao.cursor(dictionary=True)
 
-    cursor.execute("SELECT * FROM livros ORDER BY titulo ASC")
+    cursor.execute(
+        "SELECT * FROM livros ORDER BY titulo ASC"
+    )
 
     livros = cursor.fetchall()
 
@@ -23,9 +30,10 @@ def inicio():
     conexao.close()
 
     return render_template(
-        "index.html",
+        "livros.html",
         livros=livros
     )
+
 
 @app.route("/livros/<int:id>/editar")
 def editar_livro(id):
@@ -66,7 +74,7 @@ def excluir_livro(id):
     cursor.close()
     conexao.close()
 
-    return redirect("/")
+    return redirect("/livros")
 
 @app.route("/livros/<int:id>/editar", methods=["POST"])
 def atualizar_livro(id):
@@ -110,7 +118,7 @@ def atualizar_livro(id):
     cursor.close()
     conexao.close()
 
-    return redirect("/")
+    return redirect("/livros")
 
 @app.route("/livros", methods=["POST"])
 def cadastrar_livro():
@@ -148,7 +156,142 @@ def cadastrar_livro():
     cursor.close()
     conexao.close()
 
-    return redirect("/")
+    return redirect("/livros")
+
+@app.route("/usuarios")
+def listar_usuarios():
+
+    conexao = conectar()
+
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute(
+        "SELECT * FROM usuarios ORDER BY nome ASC"
+    )
+
+    usuarios = cursor.fetchall()
+
+    cursor.close()
+    conexao.close()
+
+    return render_template(
+        "usuario.html",
+        usuarios=usuarios
+    )
+
+@app.route("/usuarios", methods=["POST"])
+def cadastrar_usuario():
+
+    nome = request.form["nome"]
+    email = request.form["email"]
+    telefone = request.form["telefone"]
+    data_cadastro = request.form["data_cadastro"]
+
+    conexao = conectar()
+
+    cursor = conexao.cursor()
+
+    sql = """
+        INSERT INTO usuarios
+        (nome, email, telefone, data_cadastro)
+        VALUES (%s, %s, %s, %s)
+    """
+
+    valores = (
+        nome,
+        email,
+        telefone,
+        data_cadastro
+    )
+
+    cursor.execute(sql, valores)
+
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+    return redirect("/usuarios")
+
+@app.route("/usuarios/<int:id>/editar")
+def editar_usuario(id):
+
+    conexao = conectar()
+
+    cursor = conexao.cursor(dictionary=True)
+
+    cursor.execute(
+        "SELECT * FROM usuarios WHERE id = %s",
+        (id,)
+    )
+
+    usuario = cursor.fetchone()
+
+    cursor.close()
+    conexao.close()
+
+    return render_template(
+        "editar_usuario.html",
+        usuario=usuario
+    )
+
+
+@app.route("/usuarios/<int:id>/editar", methods=["POST"])
+def atualizar_usuario(id):
+
+    nome = request.form["nome"]
+    email = request.form["email"]
+    telefone = request.form["telefone"]
+    data_cadastro = request.form["data_cadastro"]
+
+    conexao = conectar()
+
+    cursor = conexao.cursor()
+
+    sql = """
+        UPDATE usuarios
+        SET nome = %s,
+            email = %s,
+            telefone = %s,
+            data_cadastro = %s
+        WHERE id = %s
+    """
+
+    valores = (
+        nome,
+        email,
+        telefone,
+        data_cadastro,
+        id
+    )
+
+    cursor.execute(sql, valores)
+
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+    return redirect("/usuarios")
+
+@app.route("/usuarios/<int:id>/excluir", methods=["POST"])
+def excluir_usuario(id):
+
+    conexao = conectar()
+
+    cursor = conexao.cursor()
+
+    cursor.execute(
+        "DELETE FROM usuarios WHERE id = %s",
+        (id,)
+    )
+
+    conexao.commit()
+
+    cursor.close()
+    conexao.close()
+
+    return redirect("/usuarios")
 
 if __name__ == "__main__":
     app.run(debug=True)
