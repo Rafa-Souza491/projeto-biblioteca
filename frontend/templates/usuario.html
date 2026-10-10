@@ -2,211 +2,268 @@
 <html lang="pt-BR">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Usuários - Sistema de Biblioteca</title>
 
     <style>
-
         body {
             font-family: Arial, sans-serif;
-            margin: 40px;
+            margin: 0;
+            padding: 25px;
+            background: #f4f6f9;
+            color: #222;
         }
 
-        h1 {
-            margin-bottom: 30px;
+        .container {
+            max-width: 1100px;
+            margin: auto;
         }
 
-        form {
-            width: 400px;
+        h1, h2 {
+            color: #243447;
         }
 
-        label {
-            display: block;
-            margin-top: 10px;
-            margin-bottom: 5px;
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px #00000012;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        input, button, .botao {
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
         }
 
         input {
+            border: 1px solid #ccc;
             width: 100%;
-            padding: 8px;
             box-sizing: border-box;
         }
 
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
+        button, .botao {
+            border: none;
             cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            color: white;
         }
 
-        hr {
-            margin: 40px 0;
+        .principal {
+            background: #2457a7;
+        }
+
+        .editar {
+            background: #d89b13;
+        }
+
+        .desativar {
+            background: #c0392b;
+        }
+
+        .reativar {
+            background: #218838;
+        }
+
+        .menu {
+            background: #475569;
+            margin-right: 5px;
+            margin-bottom: 8px;
+        }
+
+        .acoes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            background: white;
         }
 
-        th,
-        td {
-            border: 1px solid #ccc;
+        th, td {
+            border: 1px solid #ddd;
             padding: 10px;
             text-align: left;
         }
 
         th {
+            background: #243447;
+            color: white;
+        }
+
+        tr.inativo {
+            background: #f0f0f0;
+            color: #777;
+        }
+
+        .ativo {
+            color: #218838;
             font-weight: bold;
         }
 
-    </style>
-
-    <script>
-
-        function confirmarExclusao() {
-
-            return confirm(
-                "Tem certeza que deseja excluir este usuário?"
-            );
-
+        .inativo-texto {
+            color: #c0392b;
+            font-weight: bold;
         }
 
-    </script>
+        .mensagem {
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
 
+        .sucesso {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .erro {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .tabela-responsiva {
+            overflow-x: auto;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+        }
+    </style>
 </head>
 
 <body>
+<div class="container">
 
     <h1>Gerenciamento de Usuários</h1>
 
-    <h2>Cadastrar Usuário</h2>
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+        {% for categoria, mensagem in mensagens %}
+            <div class="mensagem {{ categoria }}">{{ mensagem }}</div>
+        {% endfor %}
+    {% endwith %}
 
-    <form action="/usuarios" method="POST">
+    <div class="card">
+        <h2>Cadastrar usuário</h2>
 
-        <label for="nome">Nome:</label>
+        <form method="POST" action="{{ url_for('usuarios') }}">
+            <div class="form-grid">
+                <input type="text" name="nome"
+                       placeholder="Nome completo" required>
 
-        <input
-            type="text"
-            id="nome"
-            name="nome"
-            required
-        >
+                <input type="email" name="email"
+                       placeholder="E-mail" required>
 
-        <label for="email">E-mail:</label>
+                <input type="text" name="telefone"
+                       placeholder="Telefone">
 
-        <input
-            type="email"
-            id="email"
-            name="email"
-            required
-        >
+                <input type="date" name="data_cadastro"
+                       value="{{ hoje or '' }}" required>
+            </div>
 
-        <label for="telefone">Telefone:</label>
+            <br>
+            <button type="submit" class="principal">
+                Cadastrar usuário
+            </button>
+        </form>
+    </div>
 
-        <input
-            type="text"
-            id="telefone"
-            name="telefone"
-        >
+    <div class="card">
+        <h2>Usuários cadastrados</h2>
 
-        <label for="data_cadastro">Data de cadastro:</label>
+        <p>
+            Desativar um usuário não apaga seu histórico de empréstimos
+            nem altera o cadastro dos livros.
+        </p>
 
-        <input
-            type="date"
-            id="data_cadastro"
-            name="data_cadastro"
-            required
-        >
+        <div class="tabela-responsiva">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Telefone</th>
+                        <th>Data de cadastro</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
 
-        <div style="display: flex; gap: 50px; align-items: center;">
+                <tbody>
+                {% for usuario in usuarios %}
+                    <tr class="{% if not usuario.ativo %}inativo{% endif %}">
+                        <td>{{ usuario.id }}</td>
+                        <td>{{ usuario.nome }}</td>
+                        <td>{{ usuario.email }}</td>
+                        <td>{{ usuario.telefone or '-' }}</td>
+                        <td>{{ usuario.data_cadastro }}</td>
 
-    <button type="submit">
-        Cadastrar Usuário
-    </button>
+                        <td>
+                            {% if usuario.ativo %}
+                                <span class="ativo">Ativo</span>
+                            {% else %}
+                                <span class="inativo-texto">Desativado</span>
+                            {% endif %}
+                        </td>
 
-    <a href="/">
-        <button type="button">
-            Voltar para página inicial
-        </button>
-    </a>
+                        <td>
+                            <div class="acoes">
+                                {% if usuario.ativo %}
+                                    <a class="botao editar"
+                                       href="{{ url_for('editar_usuario', id=usuario.id) }}">
+                                        Editar
+                                    </a>
+
+                                    <form method="POST"
+                                          action="{{ url_for('excluir_usuario', id=usuario.id) }}"
+                                          onsubmit="return confirm('Deseja desativar este usuário? O histórico será preservado.');">
+
+                                        <button type="submit" class="desativar">
+                                            Desativar
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form method="POST"
+                                          action="{{ url_for('reativar_usuario', id=usuario.id) }}"
+                                          onsubmit="return confirm('Deseja reativar este usuário?');">
+
+                                        <button type="submit" class="reativar">
+                                            Reativar
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="7">Nenhum usuário cadastrado.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <a href="/" class="botao menu">Página inicial</a>
+    <a href="{{ url_for('livros') }}" class="botao menu">Livros</a>
+    <a href="{{ url_for('emprestimos') }}" class="botao menu">Empréstimos</a>
 
 </div>
-
-    </form>
-
-    <hr>
-
-    <h2>Usuários cadastrados</h2>
-
-    <table>
-
-        <thead>
-
-            <tr>
-                <th>Nº</th>
-                <th>Nome</th>
-                <th>E-mail</th>
-                <th>Telefone</th>
-                <th>Data de cadastro</th>
-                <th>Ações</th>
-            </tr>
-
-        </thead>
-
-        <tbody>
-
-            {% for usuario in usuarios %}
-
-            <tr>
-
-                <td>{{ loop.index }}</td>
-
-                <td>{{ usuario.nome }}</td>
-
-                <td>{{ usuario.email }}</td>
-
-                <td>{{ usuario.telefone }}</td>
-
-                <td>{{ usuario.data_cadastro }}</td>
-
-                <td>
-
-                    <a href="/usuarios/{{ usuario.id }}/editar">
-                        Editar
-                    </a>
-
-                    <form
-                        action="/usuarios/{{ usuario.id }}/excluir"
-                        method="POST"
-                        style="display:inline;"
-                        onsubmit="return confirmarExclusao();"
-                    >
-
-                        <button type="submit">
-                            Excluir
-                        </button>
-
-                    </form>
-
-                </td>
-
-            </tr>
-
-            {% endfor %}
-
-        </tbody>
-
-    </table>
-
-    <br>
-
-    <a href="/">
-        Voltar para livros
-    </a>
-
 </body>
-
 </html>

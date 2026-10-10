@@ -2,104 +2,197 @@
 <html lang="pt-BR">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <title>Editar Livro</title>
+    <title>Editar Livro - Sistema de Biblioteca</title>
 
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 30px 15px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 550px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .campo {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 7px;
+            font-weight: bold;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #555;
+        }
+
+        .botoes {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        button,
+        .voltar {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+        }
+
+        .voltar {
+            background-color: #e5e7eb;
+            color: #333;
+        }
+
+        .voltar:hover {
+            background-color: #d1d5db;
+        }
+
+        @media (max-width: 450px) {
+            .container {
+                padding: 20px;
+            }
+
+            .botoes {
+                flex-direction: column;
+            }
+        }
+    </style>
 </head>
 
 <body>
 
-    <h1>Editar Livro</h1>
+    <main class="container">
 
-    <form action="/livros/{{ livro.id }}/editar" method="POST">
+        <h1>Editar Livro</h1>
 
-        <label for="titulo">Título:</label>
+        <form action="/livros/{{ livro.id }}/editar" method="POST">
 
-        <input
-            type="text"
-            id="titulo"
-            name="titulo"
-            value="{{ livro.titulo }}"
-            required
-        >
+            <div class="campo">
+                <label for="titulo">Título:</label>
+                <input
+                    type="text"
+                    id="titulo"
+                    name="titulo"
+                    value="{{ livro.titulo }}"
+                    maxlength="150"
+                    required
+                >
+            </div>
 
-        <br><br>
+            <div class="campo">
+                <label for="autor">Autor:</label>
+                <input
+                    type="text"
+                    id="autor"
+                    name="autor"
+                    value="{{ livro.autor }}"
+                    maxlength="100"
+                    required
+                >
+            </div>
 
+            <div class="campo">
+                <label for="isbn">ISBN:</label>
+                <input
+                    type="text"
+                    id="isbn"
+                    name="isbn"
+                    value="{{ livro.isbn or '' }}"
+                    maxlength="20"
+                >
+            </div>
 
-        <label for="autor">Autor:</label>
+            <div class="campo">
+                <label for="categoria">Categoria:</label>
+                <input
+                    type="text"
+                    id="categoria"
+                    name="categoria"
+                    value="{{ livro.categoria or '' }}"
+                    maxlength="50"
+                >
+            </div>
 
-        <input
-            type="text"
-            id="autor"
-            name="autor"
-            value="{{ livro.autor }}"
-            required
-        >
+            <div class="campo">
+                <label for="ano_publicacao">Ano de publicação:</label>
+                <input
+                    type="number"
+                    id="ano_publicacao"
+                    name="ano_publicacao"
+                    value="{{ livro.ano_publicacao or '' }}"
+                    min="1"
+                >
+            </div>
 
-        <br><br>
+            <div class="campo">
+                <label for="quantidade">Quantidade:</label>
+                <input
+                    type="number"
+                    id="quantidade"
+                    name="quantidade"
+                    value="{{ livro.quantidade }}"
+                    min="0"
+                    required
+                >
+            </div>
 
+            <div class="botoes">
+                <button type="submit">Salvar alterações</button>
 
-        <label for="isbn">ISBN:</label>
+                <a href="/livros" class="voltar">
+                    Voltar para livros
+                </a>
+            </div>
 
-        <input
-            type="text"
-            id="isbn"
-            name="isbn"
-            value="{{ livro.isbn or '' }}"
-        >
+        </form>
 
-        <br><br>
-
-
-        <label for="categoria">Categoria:</label>
-
-        <input
-            type="text"
-            id="categoria"
-            name="categoria"
-            value="{{ livro.categoria or '' }}"
-        >
-
-        <br><br>
-
-
-        <label for="ano_publicacao">Ano de publicação:</label>
-
-        <input
-            type="number"
-            id="ano_publicacao"
-            name="ano_publicacao"
-            value="{{ livro.ano_publicacao or '' }}"
-        >
-
-        <br><br>
-
-
-        <label for="quantidade">Quantidade:</label>
-
-        <input
-            type="number"
-            id="quantidade"
-            name="quantidade"
-            value="{{ livro.quantidade }}"
-            required
-        >
-
-        <br><br>
-
-        <button type="submit">
-            Salvar alterações
-        </button>
-
-    </form>
-
-    <br>
-
-    <a href="/livros">Voltar para livros</a>
+    </main>
 
 </body>
 

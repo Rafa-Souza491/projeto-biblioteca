@@ -17,7 +17,8 @@ CREATE TABLE IF NOT EXISTS livros (
     isbn VARCHAR(20),
     categoria VARCHAR(50),
     ano_publicacao INT,
-    quantidade INT NOT NULL
+    quantidade INT NOT NULL,
+    ativo TINYINT(1) NOT NULL DEFAULT 1
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- =========================================
@@ -139,7 +140,8 @@ CREATE TABLE IF NOT EXISTS usuarios (
     nome VARCHAR(100) NOT NULL,
     email VARCHAR(150) NOT NULL,
     telefone VARCHAR(20),
-    data_cadastro DATE NOT NULL
+    data_cadastro DATE NOT NULL,
+    ativo TINYINT(1) NOT NULL DEFAULT 1
 ) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- =========================================
@@ -193,7 +195,7 @@ WHERE NOT EXISTS (
 );
 
 -- =========================================
--- TABELA DE EMPRESTIMOS - AC2
+-- TABELA DE EMPRÉSTIMOS - AC2
 -- =========================================
 
 CREATE TABLE IF NOT EXISTS emprestimos (

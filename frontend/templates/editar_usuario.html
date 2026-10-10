@@ -10,89 +10,168 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 40px;
+            margin: 0;
+            padding: 30px 15px;
+            background-color: #f5f5f5;
+            color: #333;
         }
 
-        form {
-            width: 400px;
+        .container {
+            max-width: 550px;
+            margin: 0 auto;
+            padding: 30px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            box-sizing: border-box;
+        }
+
+        h1 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .campo {
+            margin-bottom: 18px;
         }
 
         label {
             display: block;
-            margin-top: 10px;
-            margin-bottom: 5px;
+            margin-bottom: 7px;
+            font-weight: bold;
         }
 
         input {
             width: 100%;
-            padding: 8px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 15px;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #555;
+        }
+
+        .botoes {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        button,
+        .voltar {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-size: 15px;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
             box-sizing: border-box;
         }
 
         button {
-            margin-top: 20px;
-            padding: 10px 20px;
-            cursor: pointer;
+            background-color: #2563eb;
+            color: white;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+        }
+
+        .voltar {
+            background-color: #e5e7eb;
+            color: #333;
+        }
+
+        .voltar:hover {
+            background-color: #d1d5db;
+        }
+
+        @media (max-width: 450px) {
+            .container {
+                padding: 20px;
+            }
+
+            .botoes {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
 
 <body>
 
-    <h1>Editar Usuário</h1>
+    <main class="container">
 
-    <form action="/usuarios/{{ usuario.id }}/editar" method="POST">
+        <h1>Editar Usuário</h1>
 
-        <label for="nome">Nome:</label>
+        <form action="/usuarios/{{ usuario.id }}/editar" method="POST">
 
-        <input
-            type="text"
-            id="nome"
-            name="nome"
-            value="{{ usuario.nome }}"
-            required
-        >
+            <div class="campo">
+                <label for="nome">Nome:</label>
+                <input
+                    type="text"
+                    id="nome"
+                    name="nome"
+                    value="{{ usuario.nome }}"
+                    maxlength="100"
+                    required
+                >
+            </div>
 
-        <label for="email">E-mail:</label>
+            <div class="campo">
+                <label for="email">E-mail:</label>
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    value="{{ usuario.email }}"
+                    maxlength="150"
+                    required
+                >
+            </div>
 
-        <input
-            type="email"
-            id="email"
-            name="email"
-            value="{{ usuario.email }}"
-            required
-        >
+            <div class="campo">
+                <label for="telefone">Telefone:</label>
+                <input
+                    type="tel"
+                    id="telefone"
+                    name="telefone"
+                    value="{{ usuario.telefone or '' }}"
+                    maxlength="20"
+                >
+            </div>
 
-        <label for="telefone">Telefone:</label>
+            <div class="campo">
+                <label for="data_cadastro">Data de cadastro:</label>
+                <input
+                    type="date"
+                    id="data_cadastro"
+                    name="data_cadastro"
+                    value="{{ usuario.data_cadastro }}"
+                    required
+                >
+            </div>
 
-        <input
-            type="text"
-            id="telefone"
-            name="telefone"
-            value="{{ usuario.telefone or '' }}"
-        >
+            <div class="botoes">
+                <button type="submit">
+                    Salvar alterações
+                </button>
 
-        <label for="data_cadastro">Data de cadastro:</label>
+                <a href="/usuarios" class="voltar">
+                    Voltar para usuários
+                </a>
+            </div>
 
-        <input
-            type="date"
-            id="data_cadastro"
-            name="data_cadastro"
-            value="{{ usuario.data_cadastro }}"
-            required
-        >
+        </form>
 
-        <button type="submit">
-            Salvar alterações
-        </button>
-
-    </form>
-
-    <br>
-
-    <a href="/usuarios">
-        Voltar para usuários
-    </a>
+    </main>
 
 </body>
 

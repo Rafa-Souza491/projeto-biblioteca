@@ -1,299 +1,295 @@
 <!DOCTYPE html>
-
 <html lang="pt-BR">
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empréstimos - Sistema de Biblioteca</title>
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 25px;
+            background: #f4f6f9;
+            color: #222;
+        }
 
-<title>Empréstimos - Sistema de Biblioteca</title>
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
 
-<style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 40px;
-    }
+        h1, h2 {
+            color: #243447;
+        }
 
-    h1 {
-        margin-bottom: 30px;
-    }
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px #00000012;
+        }
 
-    form {
-        width: 400px;
-    }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
 
-    label {
-        display: block;
-        margin-top: 15px;
-        margin-bottom: 5px;
-    }
+        input, select, button, .botao {
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
+        }
 
-    select,
-    input {
-        width: 100%;
-        padding: 8px;
-        box-sizing: border-box;
-    }
+        input, select {
+            border: 1px solid #ccc;
+            width: 100%;
+            box-sizing: border-box;
+        }
 
-    button {
-        padding: 10px 20px;
-        cursor: pointer;
-        margin-top: 20px;
-    }
+        button, .botao {
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            color: white;
+        }
 
-    .botoes {
-        display: flex;
-        gap: 20px;
-        margin-bottom: 30px;
-    }
+        .principal {
+            background: #2457a7;
+        }
 
-    a {
-        text-decoration: none;
-    }
+        .devolver {
+            background: #218838;
+        }
 
-    hr {
-        margin: 40px 0;
-    }
+        .menu {
+            background: #475569;
+            margin-right: 5px;
+            margin-bottom: 8px;
+        }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
 
-    th,
-    td {
-        border: 1px solid #ccc;
-        padding: 10px;
-        text-align: left;
-    }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
 
-    th {
-        font-weight: bold;
-    }
+        th {
+            background: #243447;
+            color: white;
+        }
 
-    .form-devolver {
-        width: auto;
-        display: inline;
-    }
+        .mensagem {
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
 
-    .form-devolver button {
-        margin-top: 0;
-    }
-</style>
+        .sucesso {
+            background: #d4edda;
+            color: #155724;
+        }
 
+        .erro {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .devolvido {
+            color: #218838;
+            font-weight: bold;
+        }
+
+        .pendente {
+            color: #c0392b;
+            font-weight: bold;
+        }
+
+        .tabela-responsiva {
+            overflow-x: auto;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+        }
+    </style>
 </head>
 
 <body>
+<div class="container">
 
-<h1>Gerenciamento de Empréstimos</h1>
+    <h1>Gerenciamento de Empréstimos</h1>
 
-
-<p> </p>
-
-
-<h2>Registrar Empréstimo</h2>
-
-
-<form action="/emprestimos" method="POST">
-
-    <label for="usuario_id">
-        Usuário:
-    </label>
-
-    <select
-        id="usuario_id"
-        name="usuario_id"
-        required
-    >
-
-        <option value="">
-            Selecione um usuário
-        </option>
-
-        {% for usuario in usuarios %}
-
-        <option value="{{ usuario.id }}">
-            {{ usuario.nome }}
-        </option>
-
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+        {% for categoria, mensagem in mensagens %}
+            <div class="mensagem {{ categoria }}">{{ mensagem }}</div>
         {% endfor %}
+    {% endwith %}
 
-    </select>
+    <div class="card">
+        <h2>Registrar empréstimo</h2>
 
+        {% if usuarios and livros %}
+            <form method="POST" action="{{ url_for('emprestimos') }}">
+                <div class="form-grid">
+                    <div>
+                        <label for="usuario_id">Usuário</label>
+                        <select name="usuario_id" id="usuario_id" required>
+                            <option value="">Selecione um usuário</option>
 
-    <label for="livro_id">
-        Livro:
-    </label>
+                            {% for usuario in usuarios %}
+                                <option value="{{ usuario.id }}">
+                                    {{ usuario.nome }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-    <select
-        id="livro_id"
-        name="livro_id"
-        required
-    >
+                    <div>
+                        <label for="livro_id">Livro</label>
+                        <select name="livro_id" id="livro_id" required>
+                            <option value="">Selecione um livro</option>
 
-        <option value="">
-            Selecione um livro
-        </option>
+                            {% for livro in livros %}
+                                <option value="{{ livro.id }}">
+                                    {{ livro.titulo }} ({{ livro.quantidade }} disponível)
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-        {% for livro in livros %}
+                    <div>
+                        <label for="data_emprestimo">Data do empréstimo</label>
+                        <input type="date" name="data_emprestimo"
+                               id="data_emprestimo" required>
+                    </div>
 
-        <option value="{{ livro.id }}">
-            {{ livro.titulo }}
-        </option>
+                    <div>
+                        <label for="data_devolucao_prevista">
+                            Devolução prevista
+                        </label>
+                        <input type="date" name="data_devolucao_prevista"
+                               id="data_devolucao_prevista" required>
+                    </div>
+                </div>
 
-        {% endfor %}
-
-    </select>
-
-
-    <label for="data_emprestimo">
-        Data do empréstimo:
-    </label>
-
-    <input
-        type="date"
-        id="data_emprestimo"
-        name="data_emprestimo"
-        required
-    >
-
-
-    <label for="data_devolucao_prevista">
-        Data de devolução prevista:
-    </label>
-
-    <input
-        type="date"
-        id="data_devolucao_prevista"
-        name="data_devolucao_prevista"
-        required
-    >
-
-
-    <div style="display: flex; gap: 40px; align-items: center;">
-        <button type="submit">
-            Registrar Empréstimo
-        </button>
-
-    <a href="/" style="text-decoration: none;">
-        <button type="button">
-        Voltar para a Página Inicial
-        </button>
-    </a>
+                <br>
+                <button type="submit" class="principal">
+                    Registrar empréstimo
+                </button>
+            </form>
+        {% else %}
+            <p>
+                Não há usuários ativos ou livros disponíveis para empréstimo.
+                Cadastre ou reative usuários e confira o estoque dos livros.
+            </p>
+        {% endif %}
     </div>
-</form>
 
+    <div class="card">
+        <h2>Histórico de empréstimos</h2>
 
-<hr>
+        <div class="tabela-responsiva">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Usuário</th>
+                        <th>Livro</th>
+                        <th>Data do empréstimo</th>
+                        <th>Devolução prevista</th>
+                        <th>Data da devolução</th>
+                        <th>Status</th>
+                        <th>Ação</th>
+                    </tr>
+                </thead>
 
+                <tbody>
+                {% for emprestimo in emprestimos %}
+                    <tr>
+                        <td>{{ emprestimo.id }}</td>
+                        <td>{{ emprestimo.usuario }}</td>
+                        <td>{{ emprestimo.livro }}</td>
+                        <td>{{ emprestimo.data_emprestimo }}</td>
+                        <td>{{ emprestimo.data_devolucao_prevista }}</td>
+                        <td>
+                            {{ emprestimo.data_devolucao or '-' }}
+                        </td>
 
-<h2>Empréstimos cadastrados</h2>
+                        <td>
+                            {% if emprestimo.data_devolucao %}
+                                <span class="devolvido">Devolvido</span>
+                            {% else %}
+                                <span class="pendente">Não devolvido</span>
+                            {% endif %}
+                        </td>
 
+                        <td>
+                            {% if not emprestimo.data_devolucao %}
+                                <form method="POST"
+                                      action="{{ url_for('devolver_emprestimo', id=emprestimo.id) }}"
+                                      onsubmit="return confirm('Confirmar a devolução deste livro?');">
 
-<table>
-
-    <thead>
-
-        <tr>
-            <th>Nº</th>
-            <th>Usuário</th>
-            <th>Livro</th>
-            <th>Data do empréstimo</th>
-            <th>Devolução prevista</th>
-            <th>Data de devolução</th>
-            <th>Ações</th>
-        </tr>
-
-    </thead>
-
-
-    <tbody>
-
-        {% for emprestimo in emprestimos %}
-
-        <tr>
-
-            <td>
-                {{ loop.index }}
-            </td>
-
-            <td>
-                {{ emprestimo.usuario }}
-            </td>
-
-            <td>
-                {{ emprestimo.livro }}
-            </td>
-
-            <td>
-                {{ emprestimo.data_emprestimo }}
-            </td>
-
-            <td>
-                {{ emprestimo.data_devolucao_prevista }}
-            </td>
-
-            <td>
-
-                {% if emprestimo.data_devolucao %}
-
-                    {{ emprestimo.data_devolucao }}
-
+                                    <button type="submit" class="devolver">
+                                        Registrar devolução
+                                    </button>
+                                </form>
+                            {% else %}
+                                Concluído
+                            {% endif %}
+                        </td>
+                    </tr>
                 {% else %}
+                    <tr>
+                        <td colspan="8">Nenhum empréstimo registrado.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-                    Não devolvido
+    <a href="/" class="botao menu">Página inicial</a>
+    <a href="{{ url_for('livros') }}" class="botao menu">Livros</a>
+    <a href="{{ url_for('usuarios') }}" class="botao menu">Usuários</a>
 
-                {% endif %}
-
-            </td>
-
-            <td>
-
-                {% if emprestimo.data_devolucao %}
-
-                    Devolvido
-
-                {% else %}
-
-                    <form
-                        action="/emprestimos/{{ emprestimo.id }}/devolver"
-                        method="POST"
-                        class="form-devolver"
-                        onsubmit="return confirmarDevolucao();"
-                    >
-
-                        <button type="submit">
-                            Devolver
-                        </button>
-
-                    </form>
-
-                {% endif %}
-
-            </td>
-
-        </tr>
-
-        {% endfor %}
-
-    </tbody>
-
-</table>
-
+</div>
 
 <script>
+    const dataEmprestimo = document.getElementById("data_emprestimo");
+    const dataPrevista = document.getElementById("data_devolucao_prevista");
 
-    function confirmarDevolucao() {
+    if (dataEmprestimo && dataPrevista) {
+        const hoje = new Date();
+        const ano = hoje.getFullYear();
+        const mes = String(hoje.getMonth() + 1).padStart(2, "0");
+        const dia = String(hoje.getDate()).padStart(2, "0");
+        const dataAtual = `${ano}-${mes}-${dia}`;
 
-        return confirm(
-            "Deseja realmente registrar a devolução deste empréstimo?"
-        );
+        dataEmprestimo.value = dataAtual;
+        dataPrevista.min = dataAtual;
 
+        dataEmprestimo.addEventListener("change", function () {
+            dataPrevista.min = dataEmprestimo.value;
+
+            if (dataPrevista.value && dataPrevista.value < dataEmprestimo.value) {
+                dataPrevista.value = dataEmprestimo.value;
+            }
+        });
     }
-
 </script>
 
 </body>
-
 </html>

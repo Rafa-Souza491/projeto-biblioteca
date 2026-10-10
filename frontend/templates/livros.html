@@ -2,216 +2,282 @@
 <html lang="pt-BR">
 
 <head>
-
     <meta charset="UTF-8">
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <title>Sistema de Biblioteca</title>
+    <title>Livros - Sistema de Biblioteca</title>
 
     <style>
-
         body {
             font-family: Arial, sans-serif;
-            margin: 40px;
+            margin: 0;
+            padding: 25px;
+            background: #f4f6f9;
+            color: #222;
         }
 
-        h1 {
-            margin-bottom: 30px;
+        .container {
+            max-width: 1200px;
+            margin: auto;
         }
 
-        form {
-            width: 400px;
+        h1, h2 {
+            color: #243447;
         }
 
-        label {
-            display: block;
-            margin-top: 10px;
-            margin-bottom: 5px;
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 8px #00000012;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+        }
+
+        input, button, .botao {
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 14px;
         }
 
         input {
+            border: 1px solid #ccc;
             width: 100%;
-            padding: 8px;
             box-sizing: border-box;
         }
 
-        button {
-            margin-top: 20px;
-            padding: 10px 20px;
+        button, .botao {
+            border: none;
             cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+            color: white;
         }
 
-        hr {
-            margin: 40px 0;
+        .principal {
+            background: #2457a7;
+        }
+
+        .editar {
+            background: #d89b13;
+        }
+
+        .desativar {
+            background: #c0392b;
+        }
+
+        .reativar {
+            background: #218838;
+        }
+
+        .menu {
+            background: #475569;
+            margin-right: 5px;
+            margin-bottom: 8px;
+        }
+
+        .acoes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
         }
 
         table {
             width: 100%;
             border-collapse: collapse;
+            background: white;
         }
 
-        th,
-        td {
-            border: 1px solid #ccc;
+        th, td {
+            border: 1px solid #ddd;
             padding: 10px;
             text-align: left;
         }
 
         th {
+            background: #243447;
+            color: white;
+        }
+
+        tr.inativo {
+            background: #f0f0f0;
+            color: #777;
+        }
+
+        .status {
             font-weight: bold;
         }
 
+        .ativo {
+            color: #218838;
+        }
+
+        .inativo-texto {
+            color: #c0392b;
+        }
+
+        .mensagem {
+            padding: 12px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .sucesso {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .erro {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .tabela-responsiva {
+            overflow-x: auto;
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+        }
     </style>
-    <script>
-
-    function confirmarExclusao() {
-
-        return confirm(
-            "Tem certeza que deseja excluir este livro?"
-        );
-
-    }
-
-</script>
-
 </head>
 
 <body>
+<div class="container">
 
-    <h1>Sistema de Biblioteca</h1>
+    <h1>Gerenciamento de Livros</h1>
 
-    <h2>Cadastrar Livro</h2>
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+        {% for categoria, mensagem in mensagens %}
+            <div class="mensagem {{ categoria }}">{{ mensagem }}</div>
+        {% endfor %}
+    {% endwith %}
 
-    <form action="/livros" method="POST">
+    <div class="card">
+        <h2>Cadastrar livro</h2>
 
-        <label for="titulo">Título:</label>
-        <input
-            type="text"
-            id="titulo"
-            name="titulo"
-            required
-        >
+        <form method="POST" action="{{ url_for('livros') }}">
+            <div class="form-grid">
+                <input type="text" name="titulo"
+                       placeholder="Título do livro" required>
 
-        <label for="autor">Autor:</label>
-        <input
-            type="text"
-            id="autor"
-            name="autor"
-            required
-        >
+                <input type="text" name="autor"
+                       placeholder="Autor" required>
 
-        <label for="isbn">ISBN:</label>
-        <input
-            type="text"
-            id="isbn"
-            name="isbn"
-        >
+                <input type="text" name="isbn"
+                       placeholder="ISBN">
 
-        <label for="categoria">Categoria:</label>
-        <input
-            type="text"
-            id="categoria"
-            name="categoria"
-        >
+                <input type="text" name="categoria"
+                       placeholder="Categoria">
 
-        <label for="ano_publicacao">Ano de publicação:</label>
-        <input
-            type="number"
-            id="ano_publicacao"
-            name="ano_publicacao"
-        >
+                <input type="number" name="ano_publicacao"
+                       placeholder="Ano de publicação"
+                       min="0">
 
-        <label for="quantidade">Quantidade:</label>
-        <input
-            type="number"
-            id="quantidade"
-            name="quantidade"
-            required
-        >
+                <input type="number" name="quantidade"
+                       placeholder="Quantidade disponível"
+                       min="0" required>
+            </div>
 
-        <div style="display: flex; gap: 50px; align-items: center;">
+            <br>
+            <button type="submit" class="principal">
+                Cadastrar livro
+            </button>
+        </form>
+    </div>
 
-    <button type="submit">
-        Cadastrar Livro
-    </button>
+    <div class="card">
+        <h2>Livros cadastrados</h2>
 
-    <a href="/">
-        <button type="button">
-            Voltar para página inicial
-        </button>
-    </a>
+        <p>
+            Os livros desativados permanecem no sistema para preservar
+            o histórico de empréstimos.
+        </p>
+
+        <div class="tabela-responsiva">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Título</th>
+                        <th>Autor</th>
+                        <th>Categoria</th>
+                        <th>Ano</th>
+                        <th>Quantidade</th>
+                        <th>Status</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for livro in livros %}
+                    <tr class="{% if not livro.ativo %}inativo{% endif %}">
+                        <td>{{ livro.id }}</td>
+                        <td>{{ livro.titulo }}</td>
+                        <td>{{ livro.autor }}</td>
+                        <td>{{ livro.categoria or '-' }}</td>
+                        <td>{{ livro.ano_publicacao or '-' }}</td>
+                        <td>{{ livro.quantidade }}</td>
+
+                        <td>
+                            {% if livro.ativo %}
+                                <span class="status ativo">Ativo</span>
+                            {% else %}
+                                <span class="status inativo-texto">
+                                    Desativado
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <div class="acoes">
+                                {% if livro.ativo %}
+                                    <a class="botao editar"
+                                       href="{{ url_for('editar_livro', id=livro.id) }}">
+                                        Editar
+                                    </a>
+
+                                    <form method="POST"
+                                          action="{{ url_for('excluir_livro', id=livro.id) }}"
+                                          onsubmit="return confirm('Deseja desativar este livro? O histórico será preservado.');">
+
+                                        <button type="submit" class="desativar">
+                                            Desativar
+                                        </button>
+                                    </form>
+                                {% else %}
+                                    <form method="POST"
+                                          action="{{ url_for('reativar_livro', id=livro.id) }}"
+                                          onsubmit="return confirm('Deseja reativar este livro?');">
+
+                                        <button type="submit" class="reativar">
+                                            Reativar
+                                        </button>
+                                    </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="8">Nenhum livro cadastrado.</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <a href="/" class="botao menu">Página inicial</a>
+    <a href="{{ url_for('usuarios') }}" class="botao menu">Usuários</a>
+    <a href="{{ url_for('emprestimos') }}" class="botao menu">Empréstimos</a>
 
 </div>
-
-    </form>
-
-
-    <hr>
-
-
-    <h2>Livros cadastrados</h2>
-
-    <table>
-
-        <thead>
-
-           <tr>
-                <th>Nº</th>
-                <th>Título</th>
-                <th>Autor</th>
-                <th>ISBN</th>
-                <th>Categoria</th>
-                <th>Ano</th>
-                <th>Quantidade</th>
-                <th>Ações</th>
-        </tr>
-
-        </thead>
-
-        <tbody>
-
-            {% for livro in livros %}
-
-            <tr>
-                <td>{{ loop.index }}</td>
-                <td>{{ livro.titulo }}</td>
-                <td>{{ livro.autor }}</td>
-                <td>{{ livro.isbn }}</td>
-                <td>{{ livro.categoria }}</td>
-                <td>{{ livro.ano_publicacao }}</td>
-                <td>{{ livro.quantidade }}</td>
-
-                <td>
-
-    <a href="/livros/{{ livro.id }}/editar">
-        Editar
-    </a>
-
-    <form
-    action="/livros/{{ livro.id }}/excluir"
-    method="POST"
-    style="display:inline;"
-    onsubmit="return confirmarExclusao();"
->
-
-    <button type="submit">
-        Excluir
-    </button>
-
-</form>
-
-</td>
-
-
-            </tr>
-
-            {% endfor %}
-
-        </tbody>
-
-    </table>
-
 </body>
-
 </html>
